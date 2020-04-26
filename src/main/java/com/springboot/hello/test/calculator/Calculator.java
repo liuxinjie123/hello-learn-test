@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * 简单工厂方法， 参数一样时 可以选择
+ */
 public class Calculator {
     public static void main(String[] args) {
         Calculator calculator = new Calculator();

@@ -12,16 +12,12 @@ public class CashSubtractCondition extends CashCondition implements Serializable
     private double moneyCondition = 0;
     private double moneyReturn = 0;
 
-    public CashSubtractCondition() {
-        priority = CashConstants.CashConditionPriority.SUBTRACT;
-    }
+    public CashSubtractCondition() {}
 
-    public CashSubtractCondition(double money, double moneyCondition, double moneyReturn) {
-        super.money = money;
+    public CashSubtractCondition(double moneyCondition, double moneyReturn) {
         this.moneyCondition = moneyCondition;
         this.moneyReturn = moneyReturn;
         priority = CashConstants.CashConditionPriority.SUBTRACT;
-        type = CashConstants.CashSuperType.SUBTRACT;
     }
 
     @Override

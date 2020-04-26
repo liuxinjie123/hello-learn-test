@@ -9,15 +9,11 @@ import lombok.EqualsAndHashCode;
 public class CashRebateCondition extends CashCondition {
     private double moneyRebate;
 
-    public CashRebateCondition() {
-        priority = CashConstants.CashConditionPriority.REBATE;
-    }
+    public CashRebateCondition() {}
 
-    public CashRebateCondition(double money, double moneyRebate) {
-        super.money = money;
+    public CashRebateCondition(double moneyRebate) {
         this.moneyRebate = moneyRebate;
         priority = CashConstants.CashConditionPriority.REBATE;
-        type = CashConstants.CashSuperType.REBATE;
     }
 
     @Override

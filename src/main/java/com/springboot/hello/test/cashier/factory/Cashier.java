@@ -18,11 +18,11 @@ public class Cashier {
         List<CashCondition> conditionList = new ArrayList<>();
 
         // 满减优化
-        CashCondition condition = new CashSubtractCondition(money, 300, 100);
+        CashCondition condition = new CashSubtractCondition(300, 100);
         conditionList.add(condition);
 
         // 打折
-        condition = new CashRebateCondition(money,0.8);
+        condition = new CashRebateCondition(0.8);
         conditionList.add(condition);
 
         // 按优先级排序
