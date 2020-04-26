@@ -10,20 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Operation implements Serializable {
-    /**
-     * 数字1
-     */
-    public double num1;
-
-    /**
-     * 运算符
-     */
-    public String operator;
-
-    /**
-     * 数字2
-     */
-    public double num2;
+    protected OperationParams params;
 
     public String getResult() {
         return null;

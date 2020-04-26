@@ -31,8 +31,10 @@ public class Calculator {
             System.out.println(" " + num1 + operator + num2 + " = " + result);
         } catch (NumberFormatException e1) {
             System.err.println(" 请输入正确的数字。");
-        } catch (IOException e2) {
-            e2.printStackTrace();
+        } catch (BusinessException e2) {
+            System.err.println(e2.getMsg());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -41,8 +43,7 @@ public class Calculator {
      */
     private String calculate(double num1, String operator, double num2) {
         Operation operation = getOperation(operator);
-        operation.num1 = num1;
-        operation.num2 = num2;
+        operation.params = new OperationParams(num1, num2);
         return operation.getResult();
 
     }
