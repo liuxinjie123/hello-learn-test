@@ -1,5 +1,7 @@
 package com.springboot.hello.test.cashsuper;
 
+import com.springboot.hello.test.cashsuper.condition.CashCondition;
+import com.springboot.hello.test.cashsuper.condition.CashSubtractCondition;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,12 +12,12 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class CashReturn extends CashSuper {
-    private CashReturnCondition condition;
+public class CashSubtract extends CashSuper {
+    private CashCondition condition;
 
-    public CashReturn() {}
+    public CashSubtract() {}
 
-    public CashReturn(CashReturnCondition condition) {
+    public CashSubtract(CashCondition condition) {
         this.condition = condition;
     }
 

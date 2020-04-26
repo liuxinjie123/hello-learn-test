@@ -1,12 +1,11 @@
-package com.springboot.hello.test.cashsuper;
+package com.springboot.hello.test.cashsuper.condition;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
-public class CashReturnCondition implements Serializable {
+public class CashReturnCondition extends CashCondition implements Serializable {
     private double moneyCondition = 0;
     private double moneyReturn = 0;
 
