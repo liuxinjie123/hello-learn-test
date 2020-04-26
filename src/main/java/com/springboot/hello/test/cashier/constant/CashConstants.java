@@ -1,4 +1,4 @@
-package com.springboot.hello.test.cashsuper;
+package com.springboot.hello.test.cashier.constant;
 
 public class CashConstants {
 

@@ -1,4 +1,4 @@
-package com.springboot.hello.test.cashsuper;
+package com.springboot.hello.test.cashier.factory.cashsuper;
 
 /**
  * 正常收费，原价返回

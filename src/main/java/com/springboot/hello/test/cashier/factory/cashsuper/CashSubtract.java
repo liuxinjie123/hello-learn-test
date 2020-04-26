@@ -1,7 +1,6 @@
-package com.springboot.hello.test.cashsuper;
+package com.springboot.hello.test.cashier.factory.cashsuper;
 
-import com.springboot.hello.test.cashsuper.condition.CashCondition;
-import com.springboot.hello.test.cashsuper.condition.CashSubtractCondition;
+import com.springboot.hello.test.cashier.factory.condition.CashCondition;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

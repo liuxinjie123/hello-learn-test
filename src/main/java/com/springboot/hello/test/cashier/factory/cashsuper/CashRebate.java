@@ -1,7 +1,6 @@
-package com.springboot.hello.test.cashsuper;
+package com.springboot.hello.test.cashier.factory.cashsuper;
 
-import com.springboot.hello.test.cashsuper.condition.CashCondition;
-import com.springboot.hello.test.cashsuper.condition.CashRebateCondition;
+import com.springboot.hello.test.cashier.factory.condition.CashCondition;
 
 /**
  * 打折收费，初始化时，必须输入折扣率
