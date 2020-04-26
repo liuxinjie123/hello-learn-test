@@ -19,6 +19,7 @@ public class CashStrategy {
                 cc = new CashContext(new CashSubtract());
                 break;
             default:
+                cc = new CashContext(new CashNormal());
                 break;
         }
         return cc;
