@@ -1,5 +1,6 @@
 package com.springboot.hello.test.cashier.factory;
 
+import com.springboot.hello.test.cashier.factory.cashsuper.CashNormal;
 import com.springboot.hello.test.cashier.factory.condition.CashCondition;
 import com.springboot.hello.test.cashier.factory.condition.CashRebateCondition;
 import com.springboot.hello.test.cashier.factory.condition.CashSubtractCondition;
@@ -18,20 +19,24 @@ public class Cashier {
         List<CashCondition> conditionList = new ArrayList<>();
 
         // 满减优化
-        CashCondition condition = new CashSubtractCondition(300, 100);
+        CashCondition condition = new CashSubtractCondition();
         conditionList.add(condition);
 
         // 打折
-        condition = new CashRebateCondition(0.8);
+        condition = new CashRebateCondition();
         conditionList.add(condition);
 
         // 按优先级排序
         conditionList.sort(Comparator.comparingInt(CashCondition::getPriority));
 
         for (CashCondition condition1 : conditionList) {
-            money = CashFactory.createCashAccept(condition1).acceptCash(money);
+            money = createCashAccept(condition1).acceptCash(money);
         }
 
         System.out.println(" result money: " + money);
+    }
+
+    public static CashNormal createCashAccept(CashCondition condition) {
+        return new CashNormal(condition);
     }
 }

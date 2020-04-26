@@ -42,6 +42,7 @@ public class CashConstants {
         /**
          *
          */
+        public static final int NORMAL = 1000;
 
 
     }

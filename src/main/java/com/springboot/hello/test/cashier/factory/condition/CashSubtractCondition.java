@@ -9,14 +9,10 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class CashSubtractCondition extends CashCondition implements Serializable {
-    private double moneyCondition = 0;
-    private double moneyReturn = 0;
+    private double moneyCondition = 300;
+    private double moneyReturn = 100;
 
-    public CashSubtractCondition() {}
-
-    public CashSubtractCondition(double moneyCondition, double moneyReturn) {
-        this.moneyCondition = moneyCondition;
-        this.moneyReturn = moneyReturn;
+    public CashSubtractCondition() {
         priority = CashConstants.CashConditionPriority.SUBTRACT;
     }
 

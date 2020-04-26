@@ -7,12 +7,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class CashRebateCondition extends CashCondition {
-    private double moneyRebate;
+    private double moneyRebate = 0.8;
 
-    public CashRebateCondition() {}
-
-    public CashRebateCondition(double moneyRebate) {
-        this.moneyRebate = moneyRebate;
+    public CashRebateCondition() {
         priority = CashConstants.CashConditionPriority.REBATE;
     }
 
