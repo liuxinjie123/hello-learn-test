@@ -1,6 +1,6 @@
-package com.springboot.hello.service.impl;
+package com.springboot.hello.service;
 
-import com.springboot.hello.service.HelloService;
+import com.springboot.hello.api.HelloService;
 import org.springframework.stereotype.Service;
 
 @Service
