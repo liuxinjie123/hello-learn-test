@@ -11,7 +11,6 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -32,10 +31,10 @@ import org.apache.xmlbeans.XmlException;
 import java.io.*;
 import java.text.NumberFormat;
 
-public class ReadFileUtils {
+public class ReadFileUtil {
 
     public static void main(String[] args) throws Exception {
-        ReadFileUtils rf = new ReadFileUtils();
+        ReadFileUtil rf = new ReadFileUtil();
         String s = "";
 // s = rf.readTXT("E:/信用宝.txt");
 // s = rf.readPDF("E:/LoanAgreement.pdf");
@@ -98,7 +97,7 @@ public class ReadFileUtils {
 
     // 读取txt文件
     public String readTXT(String file) throws IOException {
-        String encoding = ReadFileUtils.get_charset(new File(file));
+        String encoding = ReadFileUtil.get_charset(new File(file));
         if (encoding.equalsIgnoreCase("GBK")) {
             return FileUtils.readFileToString(new File(file), "gbk");
         } else {
