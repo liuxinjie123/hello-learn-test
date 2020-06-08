@@ -1,12 +1,12 @@
 package com.springboot.hello.test.read_file;
 
-
 import org.apache.commons.io.FileUtils;
 
+import org.apache.pdfbox.io.RandomAccessBufferedFileInputStream;
+import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
-
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
@@ -26,56 +26,121 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.NumberFormat;
 
+/**
+ * 读取文件内容工具类
+ * 支持   Word，Word2007，
+ *       Excel，Excel2007，
+ *       PPT，PPT2007
+ *       PDF, TXT
+ */
 public class ReadFileUtil {
+    private static Logger logger = LoggerFactory.getLogger(ReadFileUtil.class);
 
-    public static void main(String[] args) throws Exception {
-        ReadFileUtil rf = new ReadFileUtil();
+    private static final String PDF_F = ".pdf";
+    private static final String DOC_F = ".doc";
+    private static final String DOCX_F = ".docx";
+    private static final String TXT_F = ".txt";
+    private static final String XLS_F = ".xls";
+    private static final String XLSX_F = ".xlsx";
+    private static final String PPT_F = ".ppt";
+    private static final String PPTX_F = ".pptx";
+
+    public static void main(String[] args) {
         String s = "";
-// s = rf.readTXT("E:/信用宝.txt");
-// s = rf.readPDF("E:/LoanAgreement.pdf");
-// s = rf.readEXCEL("E:/技术中心 1月打卡指纹记录 (2).xls");
- s = rf.readEXCEL2007("E:/技术中心 1月打卡指纹记录 (2).xlsx");
-// s = rf.readWORD("E:/好屋中国财务报销制度好屋发字[2018]第31号.doc");
-// s = rf.readWORD2007("E:/好屋中国财务报销制度好屋发字[2018]第31号.docx");
-//s = rf.readPPT("E:/1好屋印象0609.ppt");
-//s = rf.readPPT2007("E:/1好屋印象0609.pptx");
+// s = getFileContent("E:/信用宝.txt");
+        s = getFileContent("E:/LoanAgreement.pdf");
+// s = getFileContent("E:/技术中心 1月打卡指纹记录 (2).xls");
+// s = getFileContent("E:/技术中心 1月打卡指纹记录 (2).xlsx");
+// s = getFileContent("E:/好屋中国财务报销制度好屋发字[2018]第31号.doc");
+// s = getFileContent("E:/好屋中国财务报销制度好屋发字[2018]第31号.docx");
+// s = getFileContent("E:/1好屋印象0609.ppt");
+// s = getFileContent("E:/1好屋印象0609.pptx");
         System.out.println(s);
     }
 
+    /**
+     * 获取文件中文本内容
+     * @param fileUrl       文件url
+     */
+    public static String getFileContent(String fileUrl) {
+        int place = fileUrl.lastIndexOf(".");
+        if (place == -1) {
+            return "";
+        }
+        String fileType = fileUrl.substring(place);
+        try {
+            if (PDF_F.equalsIgnoreCase(fileType)) {
+                return getTextFromPDF(fileUrl);
+            } else if (DOC_F.equalsIgnoreCase(fileType)) {
+                return readWORD(fileUrl);
+            } else if (DOCX_F.equalsIgnoreCase(fileType)) {
+                return readWORD2007(fileUrl);
+            } else if (TXT_F.equalsIgnoreCase(fileType)) {
+                return readTXT(fileUrl);
+            } else if (PPT_F.equalsIgnoreCase(fileType)) {
+                return readPPT(fileUrl);
+            } else if (PPTX_F.equalsIgnoreCase(fileType)) {
+                return readPPT2007(fileUrl);
+            } else if (XLS_F.equalsIgnoreCase(fileType)) {
+                return readEXCEL(fileUrl);
+            } else if (XLSX_F.equalsIgnoreCase(fileType)) {
+                return readEXCEL2007(fileUrl);
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
-
-
-    // 读取pdf文件
-    public String readPDF(String file) throws IOException {
+    /**
+     * PDF
+     */
+    public static String getTextFromPDF(String pdfFilePath) {
         String result = null;
         FileInputStream is = null;
         PDDocument document = null;
         try {
-            is = new FileInputStream(file);
-            PDFParser parser = new PDFParser(is);
+            RandomAccessRead randomAccessRead = new RandomAccessBufferedFileInputStream(pdfFilePath);
+            PDFParser parser = new PDFParser(randomAccessRead);
             parser.parse();
             document = parser.getPDDocument();
             PDFTextStripper stripper = new PDFTextStripper();
             result = stripper.getText(document);
+        } catch (FileNotFoundException e) {
+            logger.error(" file not found exception", e);
+        } catch (IOException e) {
+            logger.error(" io exception", e);
         } finally {
             if (is != null) {
-                is.close();
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    logger.error(" io exception", e);
+                }
             }
             if (document != null) {
-                document.close();
+                try {
+                    document.close();
+                } catch (IOException e) {
+                    logger.error(" io exception", e);
+                }
             }
         }
         return result;
     }
 
 
-    // 读取doc文件
-    public String readWORD(String file) throws Exception {
+    /**
+     * Word - doc
+     */
+    public static String readWORD(String file) {
         String returnStr = "";
         try {
             WordExtractor wordExtractor = new WordExtractor(new FileInputStream(new File(file)));
@@ -88,16 +153,21 @@ public class ReadFileUtil {
         return returnStr;
     }
 
-
-
-    // 读取docx文件
-    public String readWORD2007(String file) throws Exception {
+    /**
+     * Word - docx
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public static String readWORD2007(String file) throws Exception {
         return new XWPFWordExtractor(POIXMLDocument.openPackage(file)).getText();
     }
 
-    // 读取txt文件
-    public String readTXT(String file) throws IOException {
-        String encoding = ReadFileUtil.get_charset(new File(file));
+    /**
+     * TXT
+     */
+    public static String readTXT(String file) throws IOException {
+        String encoding = get_charset(new File(file));
         if (encoding.equalsIgnoreCase("GBK")) {
             return FileUtils.readFileToString(new File(file), "gbk");
         } else {
@@ -105,17 +175,17 @@ public class ReadFileUtil {
         }
     }
 
-    // 读取ppt
-    public String readPPT(String file) throws IOException {
+    /**
+     * PPT
+     */
+    public static String readPPT(String file) throws IOException {
         StringBuilder sb = new StringBuilder();
-//        FileInputStream is = new FileInputStream(file);
         SlideShow ppt = new SlideShow(new HSLFSlideShow(file));
         Slide[] slides = ppt.getSlides();
         //提取文本信息
         for (Slide each : slides) {
             TextRun[] textRuns = each.getTextRuns();
             for (int i=0 ;i< textRuns.length; i++ ) {
-//                RichTextRun[] richTextRuns = textRuns.getRichTextRuns();
                 for (int j = 0; j < textRuns.length; j++) {
                     sb.append(textRuns[j].getText());
                 }
@@ -126,28 +196,34 @@ public class ReadFileUtil {
         return sb.toString();
     }
 
-    // 读取pptx
-    public String readPPT2007(String file) throws IOException, XmlException, OpenXML4JException {
+    /**
+     * PPTX
+     */
+    public static String readPPT2007(String file) throws IOException, XmlException, OpenXML4JException {
         return new XSLFPowerPointExtractor(POIXMLDocument.openPackage(file)).getText();
     }
 
-    // 读取xls文件
-    public String readEXCEL(String file) throws IOException {
+    /**
+     * Excel - xls
+     */
+    public static String readEXCEL(String file) throws IOException {
         StringBuilder content = new StringBuilder();
-        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(file));// 创建对Excel工作簿文件的引用
+        // 创建对Excel工作簿文件的引用
+        HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(file));
         for (int numSheets = 0; numSheets < workbook.getNumberOfSheets(); numSheets++) {
             if (null != workbook.getSheetAt(numSheets)) {
-                HSSFSheet aSheet = workbook.getSheetAt(numSheets);// 获得一个sheet
-                for (int rowNumOfSheet = 0; rowNumOfSheet <= aSheet
-                        .getLastRowNum(); rowNumOfSheet++) {
+                // 获得一个sheet
+                HSSFSheet aSheet = workbook.getSheetAt(numSheets);
+                for (int rowNumOfSheet = 0; rowNumOfSheet <= aSheet.getLastRowNum(); rowNumOfSheet++) {
                     if (null != aSheet.getRow(rowNumOfSheet)) {
-                        HSSFRow aRow = aSheet.getRow(rowNumOfSheet); // 获得一个行
-                        for (short cellNumOfRow = 0; cellNumOfRow <= aRow
-                                .getLastCellNum(); cellNumOfRow++) {
+                        // 获得一行
+                        HSSFRow aRow = aSheet.getRow(rowNumOfSheet);
+                        for (short cellNumOfRow = 0; cellNumOfRow <= aRow.getLastCellNum(); cellNumOfRow++) {
                             if (null != aRow.getCell(cellNumOfRow)) {
-                                HSSFCell aCell = aRow.getCell(cellNumOfRow);// 获得列值
-                                if (this.convertCell(aCell).length() > 0) {
-                                    content.append(this.convertCell(aCell));
+                                // 获得列值
+                                HSSFCell aCell = aRow.getCell(cellNumOfRow);
+                                if (convertCell(aCell).length() > 0) {
+                                    content.append(convertCell(aCell));
                                 }
                             }
                             content.append("\n");
@@ -160,23 +236,26 @@ public class ReadFileUtil {
     }
 
 
-    // 读取xlsx文件
-    public String readEXCEL2007(String file) throws IOException {
+    /**
+     * Excel - xlsx
+     */
+    public static String readEXCEL2007(String file) throws IOException {
         StringBuilder content = new StringBuilder();
         XSSFWorkbook workbook = new XSSFWorkbook(file);
         for (int numSheets = 0; numSheets < workbook.getNumberOfSheets(); numSheets++) {
             if (null != workbook.getSheetAt(numSheets)) {
-                XSSFSheet aSheet = workbook.getSheetAt(numSheets);// 获得一个sheet
-                for (int rowNumOfSheet = 0; rowNumOfSheet <= aSheet
-                        .getLastRowNum(); rowNumOfSheet++) {
+                // 获得一个sheet
+                XSSFSheet aSheet = workbook.getSheetAt(numSheets);
+                for (int rowNumOfSheet = 0; rowNumOfSheet <= aSheet.getLastRowNum(); rowNumOfSheet++) {
                     if (null != aSheet.getRow(rowNumOfSheet)) {
-                        XSSFRow aRow = aSheet.getRow(rowNumOfSheet); // 获得一个行
-                        for (short cellNumOfRow = 0; cellNumOfRow <= aRow
-                                .getLastCellNum(); cellNumOfRow++) {
+                        // 获得一个行
+                        XSSFRow aRow = aSheet.getRow(rowNumOfSheet);
+                        for (short cellNumOfRow = 0; cellNumOfRow <= aRow.getLastCellNum(); cellNumOfRow++) {
                             if (null != aRow.getCell(cellNumOfRow)) {
-                                XSSFCell aCell = aRow.getCell(cellNumOfRow);// 获得列值
-                                if (this.convertCell(aCell).length() > 0) {
-                                    content.append(this.convertCell(aCell));
+                                // 获得列值
+                                XSSFCell aCell = aRow.getCell(cellNumOfRow);
+                                if (convertCell(aCell).length() > 0) {
+                                    content.append(convertCell(aCell));
                                 }
                             }
                             content.append("\n");
@@ -188,16 +267,13 @@ public class ReadFileUtil {
         return content.toString();
     }
 
-
-    private String convertCell(Cell cell) {
+    private static String convertCell(Cell cell) {
         NumberFormat formater = NumberFormat.getInstance();
         formater.setGroupingUsed(false);
         String cellValue = "";
         if (cell == null) {
             return cellValue;
         }
-
-
         switch (cell.getCellType()) {
             case HSSFCell.CELL_TYPE_NUMERIC:
                 cellValue = formater.format(cell.getNumericCellValue());
@@ -247,9 +323,7 @@ public class ReadFileUtil {
             }
             bis.reset();
             if (!checked) {
-// int len = 0;
                 int loc = 0;
-
 
                 while ((read = bis.read()) != -1) {
                     loc++;
@@ -264,8 +338,7 @@ public class ReadFileUtil {
                         read = bis.read();
                         if (0x80 <= read && read <= 0xBF) {
                             // 双字节 (0xC0 - 0xDF)
-                            // (0x80
-// - 0xBF),也可能在GB编码内
+                            // (0x80 // - 0xBF),也可能在GB编码内
                             continue;
                         } else {
                             break;
@@ -285,8 +358,6 @@ public class ReadFileUtil {
                         }
                     }
                 }
-// System.out.println( loc + " " + Integer.toHexString( read )
-// );
             }
         } catch (Exception e) {
             e.printStackTrace();
