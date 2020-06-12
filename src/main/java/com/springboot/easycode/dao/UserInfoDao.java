@@ -1,7 +1,8 @@
 package com.springboot.easycode.dao;
 
 import com.springboot.easycode.entity.UserInfo;
-import org.apache.ibatis.annotations.Param;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 /**
