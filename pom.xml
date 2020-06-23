@@ -8,14 +8,16 @@
 		<version>2.3.0.RELEASE</version>
 		<relativePath/>
 	</parent>
+
 	<groupId>com.springboot</groupId>
 	<artifactId>hello</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>hello</name>
+	<packaging>jar</packaging>
 	<description>Hello SpringBoot</description>
 
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>8</java.version>
 	</properties>
 
 	<dependencies>
@@ -95,7 +97,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.6.2</version>
+			<!--<version>1.6.2</version>-->
 			<scope>test</scope>
 		</dependency>
 
@@ -121,6 +123,7 @@
 
 
 	<build>
+		<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -129,13 +132,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
+		</pluginManagement>
 	</build>
 
 </project>

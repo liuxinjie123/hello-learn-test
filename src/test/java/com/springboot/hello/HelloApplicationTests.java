@@ -1,5 +1,6 @@
 package com.springboot.hello;
 
+import com.alibaba.fastjson.JSON;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,8 +23,9 @@ class HelloApplicationTests {
 	public void getHello() throws Exception {
 		System.out.println(" --- test001 --- ");
 		mvc.perform(MockMvcRequestBuilders.get("/hello/hello").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(content().string(equalTo("Hello")));
+				.andExpect(status().isOk());
+		String content = content().toString();
+        System.out.println("content: " + content.toString());
 	}
 
 
