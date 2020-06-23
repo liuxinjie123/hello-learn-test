@@ -13,7 +13,6 @@ class FileTest {
             InputStream is = url.openStream();
             BufferedInputStream bis = new BufferedInputStream(is);
 
-
             while((b=is.read()) != -1) {
                 str = str+(char)b;
             }
