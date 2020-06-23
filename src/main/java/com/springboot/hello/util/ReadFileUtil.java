@@ -1,4 +1,4 @@
-package com.springboot.hello.test.util;
+package com.springboot.hello.util;
 
 import com.alibaba.fastjson.JSON;
 
