@@ -1,6 +1,7 @@
 package com.springboot.hello;
 
 import com.alibaba.fastjson.JSON;
+import com.springboot.hello.dto.EmailProperty;
 import com.springboot.hello.dto.MySignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,8 +16,6 @@ import java.util.Arrays;
 @EnableAsync
 @SpringBootApplication
 public class HelloApplication {
-	@Autowired
-	MySignature mySignature;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HelloApplication.class, args);
@@ -34,7 +33,6 @@ public class HelloApplication {
 //				System.out.println(beanName);
 			}
 
-			System.out.println(JSON.toJSONString(mySignature));
 		};
 	}
 }

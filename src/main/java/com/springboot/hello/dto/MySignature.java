@@ -1,5 +1,6 @@
 package com.springboot.hello.dto;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
@@ -15,29 +16,30 @@ public class MySignature implements Serializable {
     /**
      * secret
      */
-    private String secret;
+    public String secret;
 
-    private int number;
+    public int number;
 
     /**
      * big number
      */
-    private long bigNumber;
+    public long bigNumber;
 
     /**
      * uuid
      */
-    private String uuid;
+    public String uuid;
 
     /**
      * number less than ten
      */
-    private int numberLessThanTen;
+    public int numberLessThanTen;
 
     /**
      * number in range
      */
-    private int numberInRange;
+    public int numberInRange;
+
 
 }
 
