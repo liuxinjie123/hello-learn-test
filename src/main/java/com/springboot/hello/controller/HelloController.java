@@ -3,6 +3,7 @@ package com.springboot.hello.controller;
 import com.springboot.hello.common.Result;
 import com.springboot.hello.dto.EmailProperty;
 import com.springboot.hello.dto.MySignature;
+import com.springboot.hello.dto.ServerProperty;
 import com.springboot.hello.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ public class HelloController {
     private MySignature mySignature;
     @Autowired
     private EmailProperty emailProperty;
+    @Autowired
+    private ServerProperty serverProperty;
 
     @GetMapping(value = "/hello")
     public Result helloSpringBoot() {
@@ -40,5 +43,13 @@ public class HelloController {
     @GetMapping(value = "/property/2")
     public Result readPropertyConfig2() {
         return Result.success2(ReflectionUtil.toJSON(emailProperty));
+    }
+
+    /**
+     * 测试读取配置文件，读 list
+     */
+    @GetMapping(value = "/property/3")
+    public Result readPropertyList() {
+        return Result.success2(ReflectionUtil.toJSON(serverProperty));
     }
 }
