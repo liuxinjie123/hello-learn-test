@@ -14,5 +14,5 @@ import java.util.List;
 @Component
 @Data
 public class ServerProperty implements Serializable {
-    private List<String> ips = new ArrayList<>();
+    private List<String> ips;
 }

@@ -22,7 +22,7 @@ public class ReflectionUtil {
                 Method m = clazz.getMethod("get" + name);
                 // 调用getter方法获取属性值
                 String value = String.valueOf(m.invoke(object));
-                result.put(name, value);
+                result.put(field.getName(), value);
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
