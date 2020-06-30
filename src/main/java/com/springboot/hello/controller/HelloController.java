@@ -31,7 +31,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/1")
     public Result readPropertyConfig() {
-        return Result.success2(ReflectionUtil.printString(mySignature));
+        return Result.success2(ReflectionUtil.toJSON(mySignature));
     }
 
     /**
@@ -39,6 +39,6 @@ public class HelloController {
      */
     @GetMapping(value = "/property/2")
     public Result readPropertyConfig2() {
-        return Result.success2(ReflectionUtil.printString(emailProperty));
+        return Result.success2(ReflectionUtil.toJSON(emailProperty));
     }
 }

@@ -1,16 +1,20 @@
 package com.springboot.hello.util;
 
+import com.alibaba.fastjson.JSON;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReflectionUtil {
 
-    public static String printString(Object object) {
+    public static String toJSON(Object object) {
         Class clazz = object.getClass();
         Field[] fields = clazz.getDeclaredFields();
-        String result = "";
+        Map<String, String> result = new HashMap<>();
         String name = "";
         try {
             for (Field field : fields) {
@@ -18,7 +22,7 @@ public class ReflectionUtil {
                 Method m = clazz.getMethod("get" + name);
                 // 调用getter方法获取属性值
                 String value = String.valueOf(m.invoke(object));
-                result += field.getName() + " --- " + value + "\n";
+                result.put(name, value);
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -27,8 +31,8 @@ public class ReflectionUtil {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        System.out.println(result);
-        return result;
+        System.out.println(JSON.toJSONString(result));
+        return JSON.toJSONString(result);
     }
 
     public static String toString(Object object) {
