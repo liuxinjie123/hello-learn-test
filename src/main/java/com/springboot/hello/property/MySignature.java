@@ -1,4 +1,4 @@
-package com.springboot.hello.dto;
+package com.springboot.hello.property;
 
 import com.alibaba.fastjson.JSON;
 import lombok.Data;

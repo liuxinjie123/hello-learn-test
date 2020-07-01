@@ -1,4 +1,4 @@
-package com.springboot.hello.dto;
+package com.springboot.hello.property;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

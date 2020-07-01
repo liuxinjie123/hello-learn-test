@@ -1,9 +1,12 @@
 package com.springboot.hello.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.springboot.hello.common.Result;
-import com.springboot.hello.dto.EmailProperty;
-import com.springboot.hello.dto.MySignature;
-import com.springboot.hello.dto.ServerProperty;
+import com.springboot.hello.property.AcmeProperties;
+import com.springboot.hello.property.EmailProperty;
+import com.springboot.hello.property.MySignature;
+import com.springboot.hello.property.ServerProperty;
+import com.springboot.hello.service.MyService;
 import com.springboot.hello.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +22,10 @@ public class HelloController {
     private EmailProperty emailProperty;
     @Autowired
     private ServerProperty serverProperty;
+    @Autowired
+    private MyService myService;
+    @Autowired
+    private AcmeProperties acmeProperties;
 
     @GetMapping(value = "/hello")
     public Result helloSpringBoot() {
@@ -52,4 +59,22 @@ public class HelloController {
     public Result readPropertyList() {
         return Result.success2(ReflectionUtil.toJSON(serverProperty));
     }
+
+    /**
+     * 测试读取 yml 配置文件
+     */
+    @GetMapping(value = "/property/yml")
+    public Result readYmlProperty() {
+        myService.openConnection();
+        return Result.success();
+    }
+
+    /**
+     * 测试读取 yml 配置文件
+     */
+    @GetMapping(value = "/property/yml2")
+    public Result readYmlProperty2() {
+        return Result.success2(JSON.toJSONString(acmeProperties));
+    }
+
 }
