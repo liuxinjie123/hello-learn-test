@@ -19,7 +19,13 @@ public class ReflectionUtil {
         try {
             for (Field field : fields) {
                 name = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-                Method m = clazz.getMethod("get" + name);
+
+                Method m = null;
+                try {
+                    m = clazz.getMethod("get" + name);
+                } catch (NoSuchMethodException e) {
+                    m = clazz.getMethod("is" + name);
+                }
                 // 调用getter方法获取属性值
                 String value = String.valueOf(m.invoke(object));
                 result.put(field.getName(), value);

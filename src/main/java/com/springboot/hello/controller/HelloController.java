@@ -74,7 +74,10 @@ public class HelloController {
      */
     @GetMapping(value = "/property/yml2")
     public Result readYmlProperty2() {
-        return Result.success2(JSON.toJSONString(acmeProperties));
+        for (String key : acmeProperties.getMap().keySet()) {
+            System.out.println(key + " : " + acmeProperties.getMap().get(key));
+        }
+        return Result.success2(ReflectionUtil.toJSON(acmeProperties));
     }
 
 }

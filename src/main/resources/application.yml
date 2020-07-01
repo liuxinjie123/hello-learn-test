@@ -3,9 +3,9 @@ acme:
   enabled: true
   remote-address: 192.168.1.1
   map:
-    "[/key1]": value1
-    "[/key2]": value2
-    /key3: value3
+    "key1": value1
+    "key2": value2
+    key3: value3
   security:
     username: admin
     roles:
