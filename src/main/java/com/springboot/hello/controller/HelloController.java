@@ -2,10 +2,7 @@ package com.springboot.hello.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.springboot.hello.common.Result;
-import com.springboot.hello.property.AcmeProperties;
-import com.springboot.hello.property.EmailProperty;
-import com.springboot.hello.property.MySignature;
-import com.springboot.hello.property.ServerProperty;
+import com.springboot.hello.property.*;
 import com.springboot.hello.service.MyService;
 import com.springboot.hello.util.ReflectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,10 @@ public class HelloController {
     private MyService myService;
     @Autowired
     private AcmeProperties acmeProperties;
+    @Autowired
+    private AppSystemProperties appSystemProperties;
+    @Autowired
+    private AppIoProperties appIoProperties;
 
     @GetMapping(value = "/hello")
     public Result helloSpringBoot() {
@@ -77,7 +78,22 @@ public class HelloController {
         for (String key : acmeProperties.getMap().keySet()) {
             System.out.println(key + " : " + acmeProperties.getMap().get(key));
         }
-        return Result.success2(ReflectionUtil.toJSON(acmeProperties));
+        return Result.success2(JSON.toJSON(acmeProperties));
     }
 
+    /**
+     * 测试读取配置文件 app.system
+     */
+    @GetMapping(value = "/property/app/system")
+    public Result readAppSystemProperty() {
+        return Result.success2(JSON.toJSONString(appSystemProperties));
+    }
+
+    /**
+     * 测试读取配置文件 app.io
+     */
+    @GetMapping(value = "/property/app/io")
+    public Result readAppIoProperty() {
+        return Result.success2(JSON.toJSONString(appIoProperties));
+    }
 }
