@@ -50,7 +50,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/2")
     public Result readPropertyConfig2() {
-        return Result.success2(ReflectionUtil.toJSON(emailProperty));
+        return Result.success2(emailProperty);
     }
 
     /**
