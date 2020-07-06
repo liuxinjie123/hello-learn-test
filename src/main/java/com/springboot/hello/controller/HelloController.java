@@ -2,16 +2,21 @@ package com.springboot.hello.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.springboot.hello.common.Result;
+import com.springboot.hello.exception.BusinessException;
 import com.springboot.hello.property.*;
 import com.springboot.hello.service.MyService;
 import com.springboot.hello.util.ReflectionUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Random;
+
 @RequestMapping(value = "/hello")
 @RestController
+@Slf4j
 public class HelloController {
     @Autowired
     private MySignature mySignature;
@@ -96,4 +101,21 @@ public class HelloController {
     public Result readAppIoProperty() {
         return Result.success2(JSON.toJSONString(appIoProperties));
     }
+
+    /**
+     * 测试 business exception
+     */
+    @GetMapping(value = "/exception/resolver")
+    public Result testExceptionResolver() {
+        Random random = new Random(20);
+        int num = random.nextInt(20);
+        for (int i=0; i<30; i++) {
+            log.info("num: {}.", num);
+        }
+        if (num < 10) {
+            throw new BusinessException("the random num is :" + num);
+        }
+        return Result.success(String.valueOf(num));
+    }
+
 }
