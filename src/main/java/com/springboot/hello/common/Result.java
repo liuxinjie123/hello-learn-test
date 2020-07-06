@@ -1,5 +1,6 @@
 package com.springboot.hello.common;
 
+import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -40,6 +41,6 @@ public class Result implements Serializable {
     }
 
     public static Result success2(Object data) {
-        return new Result(CODE_SUCCESS, MSG_SUCCESS, data);
+        return new Result(CODE_SUCCESS, MSG_SUCCESS, JSON.toJSONString(data));
     }
 }

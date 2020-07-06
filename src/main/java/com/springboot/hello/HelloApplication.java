@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @EnableAsync
 @SpringBootApplication
-@ConfigurationPropertiesScan(value = {"com.springboot.hello.property"})
+//@ConfigurationPropertiesScan(value = {"com.springboot.hello.property"})
 public class HelloApplication {
 
 	public static void main(String[] args) {

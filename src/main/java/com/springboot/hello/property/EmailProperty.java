@@ -13,11 +13,16 @@ public class EmailProperty implements Serializable {
      * name
      */
     @Value("${email.name}")
-    public String name;
+    private String name;
 
     /**
      * password
      */
     @Value("${email.password}")
-    public String password;
+    private String password;
+
+    /**
+     * remark
+     */
+    public String remark;
 }
