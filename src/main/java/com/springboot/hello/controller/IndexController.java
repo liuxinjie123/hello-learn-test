@@ -11,4 +11,5 @@ public class IndexController {
     private String indexPage() {
         return "index";
     }
+
 }
