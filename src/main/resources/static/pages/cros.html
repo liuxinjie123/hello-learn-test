@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CROS</title>
+    <script src="js/jquery-3.5.0.min.js"></script>
+</head>
+<body>
+    <div id="contentDiv"></div>
+    <div id="deleteResult"></div>
+    <input type="button" value="提交数据" onclick="getData()" >
+    <input type="button" value="删除数据" onclick="deleteData()" >
+    <script>
+        function deleteData() {
+            $.ajax({
+                url:'http://localhost:8005/hello/66',
+                type:'delete',
+                success:function (data) {
+                    $("#deleteResult").html(data.msg);
+                }
+            })
+        }
+
+        function getData() {
+            $.ajax({
+                url:'http://localhost:8005/hello',
+                type:'post',
+                data:{"name":"三体"},
+                success: function (data) {
+                    $("#contentDiv").html(data.msg);
+                }
+            })
+        }
+    </script>
+</body>
+</html>

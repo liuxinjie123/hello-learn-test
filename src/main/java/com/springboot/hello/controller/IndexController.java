@@ -12,4 +12,8 @@ public class IndexController {
         return "index";
     }
 
+    @GetMapping(value = "/cros")
+    private String crosPage() {
+        return "cros";
+    }
 }
