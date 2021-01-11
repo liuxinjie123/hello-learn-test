@@ -28,10 +28,6 @@ public class Result implements Serializable {
         return new Result(CODE_SUCCESS, MSG_SUCCESS);
     }
 
-    public static Result success(String msg) {
-        return new Result(CODE_SUCCESS, msg);
-    }
-
     public static Result error() {
         return new Result(CODE_ERROR, MSG_ERROR);
     }
@@ -40,7 +36,11 @@ public class Result implements Serializable {
         return new Result(CODE_ERROR, msg);
     }
 
-    public static Result success2(Object data) {
-        return new Result(CODE_SUCCESS, MSG_SUCCESS, JSON.toJSONString(data));
+    public static Result success(Object data) {
+        if (data instanceof String) {
+            return new Result(CODE_SUCCESS, String.valueOf(data));
+        } else {
+            return new Result(CODE_SUCCESS, MSG_SUCCESS, data);
+        }
     }
 }

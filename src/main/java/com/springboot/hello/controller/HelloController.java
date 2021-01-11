@@ -36,7 +36,7 @@ public class HelloController {
     @GetMapping(value = "/hello")
     public Result helloSpringBoot() {
         String str = "Hello SpringBoot";
-        return Result.success2(str);
+        return Result.success(str);
     }
 
     /**
@@ -47,7 +47,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/1")
     public Result readPropertyConfig() {
-        return Result.success2(ReflectionUtil.toJSON(mySignature));
+        return Result.success(ReflectionUtil.toJSON(mySignature));
     }
 
     /**
@@ -55,7 +55,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/2")
     public Result readPropertyConfig2() {
-        return Result.success2(emailProperty);
+        return Result.success(emailProperty);
     }
 
     /**
@@ -63,7 +63,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/3")
     public Result readPropertyList() {
-        return Result.success2(ReflectionUtil.toJSON(serverProperty));
+        return Result.success(ReflectionUtil.toJSON(serverProperty));
     }
 
     /**
@@ -83,7 +83,7 @@ public class HelloController {
         for (String key : acmeProperties.getMap().keySet()) {
             System.out.println(key + " : " + acmeProperties.getMap().get(key));
         }
-        return Result.success2(JSON.toJSON(acmeProperties));
+        return Result.success(JSON.toJSON(acmeProperties));
     }
 
     /**
@@ -91,7 +91,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/app/system")
     public Result readAppSystemProperty() {
-        return Result.success2(JSON.toJSONString(appSystemProperties));
+        return Result.success(JSON.toJSONString(appSystemProperties));
     }
 
     /**
@@ -99,7 +99,7 @@ public class HelloController {
      */
     @GetMapping(value = "/property/app/io")
     public Result readAppIoProperty() {
-        return Result.success2(JSON.toJSONString(appIoProperties));
+        return Result.success(JSON.toJSONString(appIoProperties));
     }
 
     /**
