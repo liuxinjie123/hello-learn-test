@@ -39,7 +39,7 @@ public class JSONMapper extends ObjectMapper {
         simpleModule.addSerializer(long.class, ToStringSerializer.instance);
         registerModule(simpleModule);
 
-        // localdate localdatetime
+        // localDate localDateTime
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);

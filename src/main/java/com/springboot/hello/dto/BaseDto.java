@@ -14,7 +14,6 @@ public class BaseDto implements Serializable {
     /**
      * id
      */
-    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -22,6 +21,9 @@ public class BaseDto implements Serializable {
      */
     private String name;
 
+    /**
+     * 创建时间
+     */
     private LocalDateTime createTime;
 
 
