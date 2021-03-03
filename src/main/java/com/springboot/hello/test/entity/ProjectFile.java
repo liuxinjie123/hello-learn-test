@@ -1,7 +1,9 @@
 package com.springboot.hello.test.entity;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -9,7 +11,8 @@ import java.util.Date;
 /**
  * （项目资料）楼盘资料
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class ProjectFile implements Serializable {
 

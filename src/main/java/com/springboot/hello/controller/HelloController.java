@@ -33,6 +33,11 @@ public class HelloController {
     @Autowired
     private AppIoProperties appIoProperties;
 
+    @GetMapping(value = "/world")
+    public String helloWorld() {
+        return "Hello World";
+    }
+
     @GetMapping(value = "/hello")
     public Result helloSpringBoot() {
         String str = "Hello SpringBoot";

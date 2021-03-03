@@ -1,6 +1,5 @@
 package com.springboot.hello.common;
 
-import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
