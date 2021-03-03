@@ -12,7 +12,7 @@ package com.springboot.hello.test.algorithm;
  */
 public class SortSelect {
     public static void main(String[] args) {
-        int arr[] = new int[]{3,1,6,7,9,122344,4656,39,33,4656,5,126,77,8,9,343,57765,23,12321};
+        int arr[] = new int[]{3,1,6,7,999,122366,3656,39,33,1656,5,126,77,8,9,363,57765,23,12321,9};
         for (int i=0; i<arr.length; i++) {
             System.out.print(" " + arr[i]);
         }
