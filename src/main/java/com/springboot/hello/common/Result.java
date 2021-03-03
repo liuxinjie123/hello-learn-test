@@ -2,11 +2,13 @@ package com.springboot.hello.common;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class Result implements Serializable {
     public String code;
     public String msg;
@@ -36,10 +38,6 @@ public class Result implements Serializable {
     }
 
     public static Result success(Object data) {
-        if (data instanceof String) {
-            return new Result(CODE_SUCCESS, String.valueOf(data));
-        } else {
-            return new Result(CODE_SUCCESS, MSG_SUCCESS, data);
-        }
+        return new Result(CODE_SUCCESS, MSG_SUCCESS, data);
     }
 }
