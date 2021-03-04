@@ -21,7 +21,7 @@ public class SortQuick {
         System.out.println("\n");
     }
 
-    static void sort(int[] arr, int start, int end) {
+    private static void sort(int[] arr, int start, int end) {
         int pivot = arr[start];
         int i = start;
         int j = end;
