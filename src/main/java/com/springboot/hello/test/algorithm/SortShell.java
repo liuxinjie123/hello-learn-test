@@ -17,7 +17,7 @@ public class SortShell {
         }
         System.out.println("\n");
 
-        sort2(arr);
+        sort(arr);
 
         for (int i=0; i<arr.length; i++) {
             System.out.print(" " + arr[i]);
@@ -50,27 +50,6 @@ public class SortShell {
                 break;
             }
         }
-    }
-
-    private static void sort2(int[] arr) {
-        int gap = arr.length;
-//        while (true) {
-            gap = 1;
-            for (int i=arr.length-1; i>0; i--) {
-                int k=i;
-                while (k-gap >= 0) {
-                    if (arr[k] < arr[k - gap]) {
-                        int temp = arr[k];
-                        arr[k] = arr[k - gap];
-                        arr[k - gap] = temp;
-                    }
-                    k--;
-                }
-            }
-//            if (1 == gap) {
-//                break;
-//            }
-//        }
     }
 
 }
