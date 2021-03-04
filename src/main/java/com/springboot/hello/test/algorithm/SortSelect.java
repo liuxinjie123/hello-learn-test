@@ -18,7 +18,7 @@ public class SortSelect {
         }
         System.out.println("\n");
 
-        sort(arr);
+        sort2(arr);
 
         for (int i=0; i<arr.length; i++) {
             System.out.print(" " + arr[i]);
@@ -35,6 +35,20 @@ public class SortSelect {
                     arr[i] = arr[j];
                     arr[j] = temp;
                 }
+            }
+        }
+    }
+
+    private static void sort2(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            int k = i+1;
+            while (k < arr.length) {
+                if (arr[i] > arr[k]) {
+                    int temp = arr[k];
+                    arr[k] = arr[i];
+                    arr[i] = temp;
+                }
+                k++;
             }
         }
     }

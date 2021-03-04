@@ -11,13 +11,13 @@ package com.springboot.hello.test.algorithm;
  */
 public class SortShell {
     public static void main(String[] args) {
-        int arr[] = new int[]{3,1,6,7,999,122366,3656,39,33,1656,5,126,77,8,9,363,57765,23,12321,9};
+        int arr[] = new int[]{3,1,6,7,999,122366,3656,39,33,1656,5,126,77,8,9,363,57765,23,12321,169};
         for (int i=0; i<arr.length; i++) {
             System.out.print(" " + arr[i]);
         }
         System.out.println("\n");
 
-        sort(arr);
+        sort2(arr);
 
         for (int i=0; i<arr.length; i++) {
             System.out.print(" " + arr[i]);
@@ -54,12 +54,23 @@ public class SortShell {
 
     private static void sort2(int[] arr) {
         int gap = arr.length;
-        while (true) {
-            gap /= 2;
-            for (int i=arr.length-1; i>=0; i--) {
-
+//        while (true) {
+            gap = 1;
+            for (int i=arr.length-1; i>0; i--) {
+                int k=i;
+                while (k-gap >= 0) {
+                    if (arr[k] < arr[k - gap]) {
+                        int temp = arr[k];
+                        arr[k] = arr[k - gap];
+                        arr[k - gap] = temp;
+                    }
+                    k--;
+                }
             }
-        }
+//            if (1 == gap) {
+//                break;
+//            }
+//        }
     }
 
 }
