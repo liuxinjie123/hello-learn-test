@@ -1,12 +1,25 @@
 package com.springboot.hello.test.date_test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class DateTest {
     public static void main(String[] args) {
-        Date curentDate = getCurrDateNoSFM();
-        System.out.println(curentDate);
+        String dateStr = "20210308";
+        String YYYYMMDD = "yyyyMMdd";
+
+        SimpleDateFormat format = new SimpleDateFormat(YYYYMMDD);
+        Date date = null;
+        try {
+            date = format.parse(dateStr);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        System.out.println(date);
+        System.out.println(format.format(date));
     }
 
 
