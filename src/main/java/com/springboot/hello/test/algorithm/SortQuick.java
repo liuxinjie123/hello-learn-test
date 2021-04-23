@@ -39,12 +39,12 @@ public class SortQuick {
                 arr[i] = arr[j];
                 arr[j] = temp;
             }
-            if (i-1 > start) {
-                sort(arr, 0, i-1);
-            }
-            if (j+1 < end) {
-                sort(arr, j+1, end);
-            }
+        }
+        if (i-1 > start) {
+            sort(arr, 0, i-1);
+        }
+        if (j+1 < end) {
+            sort(arr, j+1, end);
         }
     }
 
