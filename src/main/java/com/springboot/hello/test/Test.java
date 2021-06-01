@@ -4,12 +4,13 @@ import java.text.ParseException;
 import java.util.*;
 
 public class Test {
+    private static final Integer K = 1024;
+
     public static void main(String[] args) throws ParseException {
-        Integer isQuanYu = null;
-        if (null == isQuanYu || 1 != isQuanYu) {
-            System.out.println("TRUE");
-        } else {
-            System.out.println("FALSE");
-        }
+        Integer a = 128;
+        Integer b = 128;
+        System.out.println(a == b);
+        System.out.println(a);
+        System.out.println(b);
     }
 }
