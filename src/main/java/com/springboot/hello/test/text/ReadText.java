@@ -1,12 +1,10 @@
 package com.springboot.hello.test.text;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import io.micrometer.core.instrument.util.StringUtils;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 给一个文本文件A，请将文件A中的内容按以下规则处理后输出至文件AReverse：
@@ -26,14 +24,16 @@ public class ReadText {
     public void read() {
         /** 换行的文本 */
         List<Detail> changeLineList = new ArrayList<>();
-        /** 引号内的文本 */
+        /** 英文引号内的文本 */
         List<Detail> quotation1List = new ArrayList<>();
+        /** 中文引号内的文本 */
         List<Detail> quotation2List = new ArrayList<>();
         /** 其他文本 */
         List<Detail> otherList = new ArrayList<>();
 
         String encoding = "UTF-8";
-        File file = new File("src/main/resources/A.txt");
+        String originFilePath = "src/main/resources/A.txt";
+        File file = new File(originFilePath);
 
         readText(file, encoding, changeLineList, quotation1List, quotation2List, otherList);
 
@@ -47,36 +47,41 @@ public class ReadText {
 
         sortList(allList);
 
-        printAll(allList, file, encoding);
+        String newFilePath = "src/main/resources/AReverse.txt";
+        printAll(allList, file, encoding, newFilePath);
+
+
     }
 
-    private void printAll(List<Detail> allList, File file, String encoding) {
+    private void printAll(List<Detail> allList, File file, String encoding, String newFilePath) {
         for (Detail detail : allList) {
             String content = getContent(detail, file, encoding);
-            System.out.println(content);
+            content = content.replaceAll("\r\n", "\n");
+            write2(newFilePath, content);
+            System.out.print(content);
         }
     }
 
     private String getContent(Detail detail, File file, String encoding) {
-        String res = "";
+        StringBuilder strBuilder = new StringBuilder();
         try {
-
             InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);//考虑到编码格式
             BufferedReader bufferedReader = new BufferedReader(read);
             int lineTxt = 0;
             int count = 0;
             while ((lineTxt = bufferedReader.read()) != -1) {
                 if (count >= detail.start && count <= detail.end) {
-                    res += ((char)lineTxt);
+                    strBuilder.append((char)lineTxt);
                 }
-                if (count > detail.end) {
-                    return res;
+                if (count >= detail.end) {
+                    return strBuilder.toString();
                 }
+                count++;
             }
         } catch (Exception e) {
 
         }
-        return res;
+        return strBuilder.toString();
     }
 
     private void sortList(List<Detail> allList) {
@@ -97,85 +102,132 @@ public class ReadText {
     public void readText(File file, String encoding, List<Detail> changeLineList, List<Detail> quotation1List,
                                 List<Detail> quotation2List, List<Detail> otherList) {
         try {
-            if (file.isFile() && file.exists()) {
-                InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);//考虑到编码格式
-                BufferedReader bufferedReader = new BufferedReader(read);
-                int lineTxt = 0;
-                int totalNum = 0;
-                int startPlace = 1;
-                int lineStartPlace = 1;
-                int curType = 1;
-                int sequence = 1;
-                boolean isLine = true;
-                while ((lineTxt = bufferedReader.read()) != -1) {
-                    totalNum++;
-                    if (curType == 1 && ((char)lineTxt) == '\n' && isLine) {
-                        Detail changeLine = new Detail();
-                        changeLine.type = 1;
-                        changeLine.start = lineStartPlace;
-                        changeLine.end = totalNum;
-                        changeLine.sequence = sequence++;
-                        changeLineList.add(changeLine);
-                        startPlace = totalNum + 1;
-                        lineStartPlace = startPlace;
-                    } else if (curType == 2 && ((char)lineTxt) == '\"') {
-                        curType = 1;
-                        Detail qDetail1 = new Detail();
-                        qDetail1.type = 2;
-                        qDetail1.start = startPlace;
-                        qDetail1.end = totalNum;
-                        qDetail1.sequence = sequence++;
-                        quotation1List.add(qDetail1);
-                        startPlace = totalNum + 1;
-                        lineStartPlace = startPlace;
-                    } else if (curType == 2 && ((char)lineTxt) == '\n') {
-                        isLine = false;
-                    } else if (curType == 3 && ((char)lineTxt) == '“') {
-                        curType = 1;
-                        Detail qDetail2 = new Detail();
-                        qDetail2.type = 3;
-                        qDetail2.start = startPlace;
-                        qDetail2.end = totalNum;
-                        qDetail2.sequence = sequence++;
-                        quotation2List.add(qDetail2);
-                        startPlace = totalNum + 1;
-                        lineStartPlace = startPlace;
-                    } else if (curType == 3 && ((char)lineTxt) == '\n') {
-                        isLine = false;
-                    } else if (curType != 2 && ((char)lineTxt) == '\"') {
-                        curType = 2;
-                        Detail otherDetail = new Detail();
-                        otherDetail.type = 4;
-                        otherDetail.start = startPlace;
-                        otherDetail.end = totalNum;
-                        otherDetail.sequence = sequence++;
-                        otherList.add(otherDetail);
-                        startPlace = totalNum + 1;
-                    } else if (curType != 3 && ((char)lineTxt) == '”') {
-                        curType = 3;
-                        Detail otherDetail = new Detail();
-                        otherDetail.type = 4;
-                        otherDetail.start = startPlace;
-                        otherDetail.end = totalNum;
-                        otherDetail.sequence = sequence++;
-                        otherList.add(otherDetail);
-                        startPlace = totalNum + 1;
-                    } else if (curType == 1 && ((char)lineTxt) == '\n' && !isLine) {
-                        curType = 1;
-                        Detail otherDetail = new Detail();
-                        otherDetail.type = 4;
-                        otherDetail.start = startPlace;
-                        otherDetail.end = totalNum;
-                        otherDetail.sequence = sequence++;
-                        otherList.add(otherDetail);
-                        startPlace = totalNum + 1;
-                    }
-//                    System.out.print(((char)lineTxt));
-                }
-                read.close();
+            if (!file.isFile() || !file.exists()) {
+                throw new RuntimeException("文件不存在");
             }
+            InputStreamReader read = new InputStreamReader(new FileInputStream(file), encoding);//考虑到编码格式
+            BufferedReader bufferedReader = new BufferedReader(read);
+            int lineTxt = 0;
+            int totalNum = 0;
+            int startPlace = 0;
+            int lineStartPlace = 0;
+            int curType = 1;
+            int sequence = 1;
+            boolean isLine = true;
+            while ((lineTxt = bufferedReader.read()) != -1) {
+                totalNum++;
+                if (curType == 1 && ((char)lineTxt) == '\n' && isLine) {
+                    Detail changeLine = new Detail();
+                    changeLine.type = 1;
+                    changeLine.start = lineStartPlace;
+                    changeLine.end = totalNum;
+                    changeLine.sequence = sequence++;
+                    changeLineList.add(changeLine);
+                    startPlace = totalNum + 1;
+                    lineStartPlace = startPlace;
+                } else if (curType == 2 && ((char)lineTxt) == '\"' && !isLine) {
+                    curType = 1;
+                    isLine = true;
+                    Detail qDetail1 = new Detail();
+                    qDetail1.type = 2;
+                    qDetail1.start = startPlace;
+                    qDetail1.end = totalNum;
+                    qDetail1.sequence = sequence++;
+                    quotation1List.add(qDetail1);
+                    startPlace = totalNum + 1;
+                    lineStartPlace = startPlace;
+                } else if (curType == 2 && ((char)lineTxt) == '\n') {
+                    isLine = false;
+                } else if (curType == 3 && ((char)lineTxt) == '“' && !isLine) {
+                    curType = 1;
+                    isLine = true;
+                    Detail qDetail2 = new Detail();
+                    qDetail2.type = 3;
+                    qDetail2.start = startPlace;
+                    qDetail2.end = totalNum;
+                    qDetail2.sequence = sequence++;
+                    quotation2List.add(qDetail2);
+                    startPlace = totalNum + 1;
+                    lineStartPlace = startPlace;
+                } else if (curType == 3 && ((char)lineTxt) == '\n') {
+                    isLine = false;
+                } else if (curType != 2 && ((char)lineTxt) == '\"') {
+                    curType = 2;
+                    Detail otherDetail = new Detail();
+                    otherDetail.type = 4;
+                    otherDetail.start = startPlace;
+                    otherDetail.end = totalNum;
+                    otherDetail.sequence = sequence++;
+                    otherList.add(otherDetail);
+                    startPlace = totalNum + 1;
+                } else if (curType != 3 && ((char)lineTxt) == '”') {
+                    curType = 3;
+                    Detail otherDetail = new Detail();
+                    otherDetail.type = 4;
+                    otherDetail.start = startPlace;
+                    otherDetail.end = totalNum;
+                    otherDetail.sequence = sequence++;
+                    otherList.add(otherDetail);
+                    startPlace = totalNum + 1;
+                } else if (curType == 1 && ((char)lineTxt) == '\n' && !isLine) {
+                    curType = 1;
+                    Detail otherDetail = new Detail();
+                    otherDetail.type = 4;
+                    otherDetail.start = startPlace;
+                    otherDetail.end = totalNum;
+                    otherDetail.sequence = sequence++;
+                    otherList.add(otherDetail);
+                    startPlace = totalNum + 1;
+                }
+                System.out.print(((char)lineTxt));
+            }
+            Detail otherDetail = new Detail();
+            otherDetail.type = 4;
+            otherDetail.start = startPlace;
+            otherDetail.end = totalNum;
+            otherDetail.sequence = sequence++;
+            otherList.add(otherDetail);
+            read.close();
         } catch (Exception e) {
-            System.out.println("读取文件出错");
+            if (StringUtils.isNotBlank(e.getMessage())) {
+                System.out.println(e.getMessage());
+            } else {
+                System.out.println("读取文件出错");
+            }
+        }
+    }
+
+    public void write(String path) {
+        try {
+            //将写入转化为流的形式
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+            //一次写一行
+            String ss = "测试数据\n测试数据";
+            bw.write(ss);
+            //关闭流
+            bw.close();
+
+            System.out.println("写入成功");
+        } catch (Exception e) {
+            System.out.println("写入文件异常");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void write2(String file, String conent) {
+        BufferedWriter out = null;
+        try {
+            out = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(file, true)));// true,进行追加写。
+            out.write(conent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
