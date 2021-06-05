@@ -1,7 +1,5 @@
 package com.springboot.hello.test.text;
 
-import io.micrometer.core.instrument.util.StringUtils;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +16,24 @@ import java.util.Stack;
  */
 public class ReverseText {
     public static void main(String[] args) {
+        /** 存储需要反转的行 */
         Stack<StrObj> tarStack = new Stack<>();
+        /** 存储不需要反转的行 */
         List<StrObj> tarList = new ArrayList<>();
+        /** 反转行 和 非反转行 顺序 */
         List<Sequence> seqList = new ArrayList<>();
 
         String oldFilePath = "src/main/resources/A.txt";
+        File oldFile = new File(oldFilePath);
+        checkFile(oldFile);
+
+        /** 读取文件信息 */
+        if (!readTxt(oldFile, tarStack, tarList, seqList)) {
+            System.out.println("读取文件信息失败");
+            return;
+        }
+
         String newFilePath = "src/main/resources/AReverse.txt";
-        readTxt(oldFilePath, tarStack, tarList, seqList);
         File newFile = new File(newFilePath);
         if (newFile.exists()) {
             newFile.delete();
@@ -33,63 +42,89 @@ public class ReverseText {
     }
 
     /**
-     * 传入txt路径读取txt文件
+     * 判断文件大小，不能超过1G
      */
-    public static void readTxt(String filePath, Stack<StrObj> tarStack, List<StrObj> tarList, List<Sequence> seqList) {
-        File file = new File(filePath);
-        if (file.isFile() && file.exists()) {
-            try {
-                FileInputStream fileInputStream = new FileInputStream(file);
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+    private static void checkFile(File file) {
+        if (!file.exists()) {
+            throw new RuntimeException("文件不存在");
+        }
+        if (!file.isFile()) {
+            throw new RuntimeException("不是合法的文件");
+        }
 
-                String text = null;
-                int count = 0;
-                int stackCount = 0;
-                int listCount = 0;
-                boolean inQuotation = false;
-                while ((text = bufferedReader.readLine()) != null) {
-                    if (inQuotation) {
-                        if (getStringIndexCount(text, "\"") % 2 == 1) {
-                            StrObj obj = new StrObj();
-                            encapuStrObj(obj, text, 2);
-                            tarList.add(obj);
-                            seqList.add(new Sequence(count, 2, listCount, inQuotation));
-                            listCount++;
-                            inQuotation = false;
-                        } else {
-                            StrObj obj = new StrObj();
-                            obj.content = text;
-                            tarList.add(obj);
-                            seqList.add(new Sequence(count, 2, listCount, inQuotation));
-                            listCount++;
-                            inQuotation = true;
-                        }
-                    } else {
-                        if (getStringIndexCount(text, "\"") % 2 == 1) {
-                            StrObj obj = new StrObj();
-                            obj.content = text;
-                            tarList.add(obj);
-                            seqList.add(new Sequence(count, 2, listCount, false));
-                            listCount++;
-                            inQuotation = true;
-                        } else {
-                            StrObj obj = new StrObj();
-                            encapuStrObj(obj, text, 1);
-                            tarStack.add(obj);
-                            seqList.add(new Sequence(count, 1, stackCount, false));
-                            stackCount++;
-                            inQuotation = false;
-                        }
-                        count++;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        double bytes = file.length();
+        double kilobytes = (bytes / 1024);
+        double megabytes = (kilobytes / 1024);
+        double gigabytes = (megabytes / 1024);
+        if (gigabytes > 1) {
+            throw new RuntimeException("只能处理大小不超过1G的文件");
         }
     }
 
+    /**
+     * 传入txt路径读取txt文件
+     */
+    public static boolean readTxt(File file, Stack<StrObj> tarStack, List<StrObj> tarList, List<Sequence> seqList) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String text = null;
+            /** 总行数 */
+            int count = 0;
+            /** 存储在 stack 中的个数 */
+            int stackCount = 0;
+            /** 存储在 list 中的个数 */
+            int listCount = 0;
+            /** 当前是否在引号内 */
+            boolean inQuotation = false;
+            while ((text = bufferedReader.readLine()) != null) {
+                if (inQuotation) {
+                    if (getStringIndexCount(text, "\"") % 2 == 1) {
+                        StrObj obj = new StrObj();
+                        encapuStrObj(obj, text, 2);
+                        tarList.add(obj);
+                        seqList.add(new Sequence(count, 2, listCount, inQuotation));
+                        listCount++;
+                        inQuotation = false;
+                    } else {
+                        StrObj obj = new StrObj();
+                        obj.content = text;
+                        tarList.add(obj);
+                        seqList.add(new Sequence(count, 2, listCount, inQuotation));
+                        listCount++;
+                        inQuotation = true;
+                    }
+                } else {
+                    if (getStringIndexCount(text, "\"") % 2 == 1) {
+                        StrObj obj = new StrObj();
+                        obj.content = text;
+                        tarList.add(obj);
+                        seqList.add(new Sequence(count, 2, listCount, false));
+                        listCount++;
+                        inQuotation = true;
+                    } else {
+                        StrObj obj = new StrObj();
+                        encapuStrObj(obj, text, 1);
+                        tarStack.add(obj);
+                        seqList.add(new Sequence(count, 1, stackCount, false));
+                        stackCount++;
+                        inQuotation = false;
+                    }
+                    count++;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 将 text 信息封装到 obj 中
+     */
     private static void encapuStrObj(StrObj obj, String text, int type) {
         String[] arr = text.split("\"");
         List<String> list = new ArrayList<>();
@@ -139,13 +174,13 @@ public class ReverseText {
      * 写入文件
      */
     private static void writeTxt(String newFilePath, Stack<StrObj> tarStack, List<StrObj> tarList, List<Sequence> seqList) {
-        int listC=0;
+        int listTCount=0;
         for (int i=0; i<seqList.size(); i++) {
             Sequence seq = seqList.get(i);
             String content = "";
             if (seq.type == 1) {
                 StrObj obj = tarStack.pop();
-                if (StringUtils.isNotBlank(obj.content)) {
+                if (null != obj.content && !obj.content.equals("")) {
                     content = obj.content;
                 } else if (null == obj.detailList) {
                     content = "";
@@ -170,9 +205,9 @@ public class ReverseText {
                 write(newFilePath, content);
                 write(newFilePath, "\n");
             } else if (seq.type == 2) {
-                StrObj obj = tarList.get(listC);
-                listC++;
-                if (StringUtils.isNotBlank(obj.content)) {
+                StrObj obj = tarList.get(listTCount);
+                listTCount++;
+                if (null != obj.content && !obj.content.equals("")) {
                     content = obj.content;
                 } else if (null == obj.detailList) {
                     content = "";
@@ -183,8 +218,9 @@ public class ReverseText {
                             StringBuilder strBuilder = new StringBuilder();
                             int count = 0;
                             Stack<Character> sonStack = obj.stack;
-                            while (!sonStack.isEmpty() && count <= detail.length) {
+                            while (!sonStack.isEmpty() && count < detail.length) {
                                 strBuilder.append(sonStack.pop());
+                                count++;
                             }
                             content += strBuilder.toString();
                         } else if (detail.type == 2) {
@@ -199,51 +235,9 @@ public class ReverseText {
         }
     }
 
-//    private static Strign dealStr(String content, int type) {
-//
-//    }
-
-    private static String dealStackStr(String content, int type) {
-        if (content.indexOf("\"") == -1) {
-            return content;
-        }
-        StringBuilder res = new StringBuilder();
-        String[] str = content.split("\"");
-        for (int i=0; i<str.length; i++) {
-            if (type == 1) {
-                if (i%2 == 1) {
-                    String temp = reverseStr(str[i]);
-                    res.append(temp);
-                } else {
-                    res.append(str[i]);
-                }
-            } else {
-                if (i%2 == 0) {
-                    String temp = reverseStr(str[i]);
-                    res.append(temp);
-                } else {
-                    res.append(str[i]);
-                }
-            }
-            if (i != str.length-1) {
-                res.append("\"");
-            }
-        }
-        return res.toString();
-    }
-
-    private static String reverseStr(String str) {
-        Stack<Character> stack = new Stack<>();
-        for (char ch : str.toCharArray()) {
-            stack.add(ch);
-        }
-        StringBuilder res = new StringBuilder();
-        while (!stack.isEmpty()) {
-            res.append(stack.pop());
-        }
-        return res.toString();
-    }
-
+    /**
+     * 查询 key 在 str 中出现的次数
+     */
     public static int getStringIndexCount(String str, String key) {
         if(str == null || key == null || "".equals(str.trim()) || "".equals(key.trim())){
             return 0;
