@@ -35,9 +35,12 @@ public class ReverseText {
 
         String newFilePath = "src/main/resources/AReverse.txt";
         File newFile = new File(newFilePath);
+        /** 删除老文件 */
         if (newFile.exists()) {
             newFile.delete();
         }
+
+        /** 写入 AReverse.txt */
         writeTxt(newFilePath, tarStack, tarList, seqList);
     }
 
@@ -178,9 +181,12 @@ public class ReverseText {
         for (int i=0; i<seqList.size(); i++) {
             Sequence seq = seqList.get(i);
             String content = "";
+            /**
+             * type == 1, 栈类型
+             */
             if (seq.type == 1) {
                 StrObj obj = tarStack.pop();
-                if (null != obj.content && !obj.content.equals("")) {
+                if (null != obj.content && !"".equals(obj.content)) {
                     content = obj.content;
                 } else if (null == obj.detailList) {
                     content = "";
@@ -203,11 +209,16 @@ public class ReverseText {
                     }
                 }
                 write(newFilePath, content);
-                write(newFilePath, "\n");
+                if (i != seqList.size()-1) {
+                    write(newFilePath, "\n");
+                }
             } else if (seq.type == 2) {
+                /**
+                 * type == 2, list 类型
+                 */
                 StrObj obj = tarList.get(listTCount);
                 listTCount++;
-                if (null != obj.content && !obj.content.equals("")) {
+                if (null != obj.content && !"".equals(obj.content)) {
                     content = obj.content;
                 } else if (null == obj.detailList) {
                     content = "";
@@ -230,7 +241,9 @@ public class ReverseText {
                     }
                 }
                 write(newFilePath, content);
-                write(newFilePath, "\n");
+                if (i != seqList.size() - 1) {
+                    write(newFilePath, "\n");
+                }
             }
         }
     }
@@ -238,23 +251,24 @@ public class ReverseText {
     /**
      * 查询 key 在 str 中出现的次数
      */
-    public static int getStringIndexCount(String str, String key) {
+    private static int getStringIndexCount(String str, String key) {
         if(str == null || key == null || "".equals(str.trim()) || "".equals(key.trim())){
             return 0;
         }
         int count = 0;
         int index = 0;
-        while((index=str.indexOf(key, index))!=-1){
-            index = index+key.length();
+        while ((index=str.indexOf(key, index)) != -1) {
+            index = index + key.length();
             count++;
         }
         return count;
     }
 
-    public static void write(String filePath, String conent) {
+    private static void write(String filePath, String conent) {
         BufferedWriter out = null;
         try {
-            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true)));// true,进行追加写。
+            /** true,进行追加到文件末尾 **/
+            out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true)));
             out.write(conent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,25 +281,42 @@ public class ReverseText {
         }
     }
 
-    static class StrObj {
+    private static class StrObj {
+        /**
+         * 内容，不需要反转时 此字段有值
+         */
         String content;
+
+        /**
+         * 栈，存储需要反转的内容
+         */
         Stack<Character> stack;
+
+        /**
+         * list，存储不需要反转，或者部分需要反转的内容
+         */
         List<String> list;
+
+        /**
+         * 存储在 stack，list 中的顺序， 长度等
+         */
         List<Detail> detailList;
     }
 
-    static class Detail {
+    private static class Detail {
         /**
-         * 0 - string
          * 1 - stack
          * 2 - list
          */
-        public int type;
+        int type;
 
-        public int length;
+        /**
+         * 栈中元素个数
+         */
+        int length;
     }
 
-    static class Sequence {
+    private static class Sequence {
         /**
          * 顺序，
          * 1，2，3
