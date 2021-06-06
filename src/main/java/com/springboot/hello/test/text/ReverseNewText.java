@@ -84,7 +84,14 @@ public class ReverseNewText {
             boolean inQuotation = false;
             while ((text = bufferedReader.readLine()) != null) {
                 if (inQuotation) {
-                    if (getStringIndexCount(text, "\"") % 2 == 1) {
+                    if (text.startsWith("'") && getStringIndexCount(text, "'") == 1) {
+                        StrObj obj = new StrObj();
+                        encapuStrObj(obj, text, 2);
+                        tarList.add(obj);
+                        seqList.add(new Sequence(count, 2, listCount, false));
+                        listCount++;
+                        inQuotation = true;
+                    } else if (getStringIndexCount(text, "'") % 2 == 1) {
                         StrObj obj = new StrObj();
                         encapuStrObj(obj, text, 2);
                         tarList.add(obj);
@@ -100,7 +107,7 @@ public class ReverseNewText {
                         inQuotation = true;
                     }
                 } else {
-                    if (getStringIndexCount(text, "\"") % 2 == 1) {
+                    if (text.startsWith("'") && getStringIndexCount(text, "'") == 1) {
                         StrObj obj = new StrObj();
                         obj.content = text;
                         tarList.add(obj);
@@ -129,48 +136,45 @@ public class ReverseNewText {
      * 将 text 信息封装到 obj 中
      */
     private static void encapuStrObj(StrObj obj, String text, int type) {
-        String[] arr = text.split("\"");
-        List<String> list = new ArrayList<>();
-        Stack<Character> stack = new Stack<>();
-        List<Detail> detailList = new ArrayList<>();
+        String[] arr = text.split("'");
+        Stack<String> stack = new Stack<>();
         for (int i=0; i<arr.length; i++) {
-            Detail detail = new Detail();
             if (type == 1) {
                 if (i % 2 == 1) {
-                    list.add("\"" + arr[i] + "\"");
-                    detail.type = 2;
+                    stack.add("'" + arr[i] + "'");
                 } else {
-                    detail.type = 1;
-                    int length = 0;
-                    for (char ch : arr[i].toCharArray()) {
-                        stack.add(ch);
-                        length++;
-                    }
-                    detail.length = length;
+                    String content = reverseStr(arr[i]);
+                    stack.add(content);
                 }
             } else {
                 if (i % 2 == 0) {
                     if (i != 0) {
-                        list.add("\"" + arr[i] + "\"");
+                        stack.add("'" + arr[i] + "'");
                     } else {
-                        list.add(arr[i] + "\"");
+                        stack.add(arr[i] + "'");
                     }
-                    detail.type = 2;
                 } else {
-                    detail.type = 1;
-                    int length = 0;
-                    for (char ch : arr[i].toCharArray()) {
-                        stack.add(ch);
-                        length++;
-                    }
-                    detail.length = length;
+                    String content = reverseStr(arr[i]);
+                    stack.add(content);
                 }
             }
-            detailList.add(detail);
         }
         obj.stack = stack;
-        obj.list = list;
-        obj.detailList = detailList;
+    }
+
+    private static String reverseStr(String str) {
+        if (null == str || "".equals(str)) {
+            return "";
+        }
+        Stack<Character> stack = new Stack<>();
+        for (char ch : str.toCharArray()) {
+            stack.add(ch);
+        }
+        StringBuilder strBuilder = new StringBuilder();
+        while (!stack.isEmpty()) {
+            strBuilder.append(String.valueOf(stack.pop()));
+        }
+        return strBuilder.toString();
     }
 
     /**
@@ -188,24 +192,9 @@ public class ReverseNewText {
                 StrObj obj = tarStack.pop();
                 if (null != obj.content && !"".equals(obj.content)) {
                     content = obj.content;
-                } else if (null == obj.detailList) {
-                    content = "";
                 } else {
-                    int listCount = 0;
-                    for (Detail detail : obj.detailList) {
-                        if (detail.type == 1) {
-                            StringBuilder strBuilder = new StringBuilder();
-                            int count = 0;
-                            Stack<Character> sonStack = obj.stack;
-                            while (!sonStack.isEmpty() && count < detail.length) {
-                                strBuilder.append(sonStack.pop());
-                                count++;
-                            }
-                            content += strBuilder.toString();
-                        } else if (detail.type == 2) {
-                            content += obj.list.get(listCount);
-                            listCount++;
-                        }
+                    while (!obj.stack.isEmpty()) {
+                        content += obj.stack.pop();
                     }
                 }
                 write(newFilePath, content);
@@ -220,24 +209,9 @@ public class ReverseNewText {
                 listTCount++;
                 if (null != obj.content && !"".equals(obj.content)) {
                     content = obj.content;
-                } else if (null == obj.detailList) {
-                    content = "";
                 } else {
-                    int listCount = 0;
-                    for (Detail detail : obj.detailList) {
-                        if (detail.type == 1) {
-                            StringBuilder strBuilder = new StringBuilder();
-                            int count = 0;
-                            Stack<Character> sonStack = obj.stack;
-                            while (!sonStack.isEmpty() && count < detail.length) {
-                                strBuilder.append(sonStack.pop());
-                                count++;
-                            }
-                            content += strBuilder.toString();
-                        } else if (detail.type == 2) {
-                            content += obj.list.get(listCount);
-                            listCount++;
-                        }
+                    while (!obj.stack.isEmpty()) {
+                        content += obj.stack.pop();
                     }
                 }
                 write(newFilePath, content);
@@ -290,17 +264,8 @@ public class ReverseNewText {
         /**
          * 栈，存储需要反转的内容
          */
-        Stack<Character> stack;
+        Stack<String> stack;
 
-        /**
-         * list，存储不需要反转，或者部分需要反转的内容
-         */
-        List<String> list;
-
-        /**
-         * 存储在 stack，list 中的顺序， 长度等
-         */
-        List<Detail> detailList;
     }
 
     private static class Detail {
