@@ -23,7 +23,7 @@ public class ReverseNewText {
         /** 反转行 和 非反转行 顺序 */
         List<Sequence> seqList = new ArrayList<>();
 
-        String oldFilePath = "src/main/resources/A.txt";
+        String oldFilePath = "src/main/resources/A1.txt";
         File oldFile = new File(oldFilePath);
         checkFile(oldFile);
 
