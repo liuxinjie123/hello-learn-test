@@ -54,7 +54,6 @@ public class ReverseNewText {
         if (!file.isFile()) {
             throw new RuntimeException("不是合法的文件");
         }
-
         double bytes = file.length();
         double kilobytes = (bytes / 1024);
         double megabytes = (kilobytes / 1024);
@@ -73,56 +72,50 @@ public class ReverseNewText {
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            String text = null;
-            /** 总行数 */
-            int count = 0;
-            /** 存储在 stack 中的个数 */
-            int stackCount = 0;
-            /** 存储在 list 中的个数 */
-            int listCount = 0;
             /** 当前是否在引号内 */
             boolean inQuotation = false;
-            while ((text = bufferedReader.readLine()) != null) {
-                if (inQuotation) {
-                    if (text.startsWith("'") && getStringIndexCount(text, "'") == 1) {
-                        StrObj obj = new StrObj();
-                        encapuStrObj(obj, text, 2);
-                        tarList.add(obj);
-                        seqList.add(new Sequence(count, 2, listCount, false));
-                        listCount++;
-                        inQuotation = true;
-                    } else if (getStringIndexCount(text, "'") % 2 == 1) {
-                        StrObj obj = new StrObj();
-                        encapuStrObj(obj, text, 2);
-                        tarList.add(obj);
-                        seqList.add(new Sequence(count, 2, listCount, inQuotation));
-                        listCount++;
-                        inQuotation = false;
-                    } else {
-                        StrObj obj = new StrObj();
-                        obj.content = text;
-                        tarList.add(obj);
-                        seqList.add(new Sequence(count, 2, listCount, inQuotation));
-                        listCount++;
-                        inQuotation = true;
-                    }
+
+            String text = null;
+            String next = bufferedReader.readLine();
+            StringBuilder unUsed = new StringBuilder();
+            while (next != null) {
+                text = next;
+                next = bufferedReader.readLine();
+                if (next == null) {
+                    StrObj obj = new StrObj();
+                    unUsed.append(text);
+                    obj.content = unUsed.toString();
+                    unUsed = null;
+                    tarList.add(obj);
+                    seqList.add(new Sequence(2, inQuotation));
                 } else {
-                    if (text.startsWith("'") && getStringIndexCount(text, "'") == 1) {
-                        StrObj obj = new StrObj();
-                        obj.content = text;
-                        tarList.add(obj);
-                        seqList.add(new Sequence(count, 2, listCount, false));
-                        listCount++;
-                        inQuotation = true;
+                    if (inQuotation) {
+                        if (getStringIndexCount(text, "'") % 2 == 1) {
+                            StrObj obj = new StrObj();
+                            unUsed.append(text);
+                            encapuStrObj(obj, unUsed.toString(), 1);
+                            unUsed = new StringBuilder();
+                            tarStack.add(obj);
+                            seqList.add(new Sequence(1, inQuotation));
+                            inQuotation = false;
+                        } else {
+                            unUsed.append(text);
+                            unUsed.append("\n");
+                            inQuotation = true;
+                        }
                     } else {
-                        StrObj obj = new StrObj();
-                        encapuStrObj(obj, text, 1);
-                        tarStack.add(obj);
-                        seqList.add(new Sequence(count, 1, stackCount, false));
-                        stackCount++;
-                        inQuotation = false;
+                        if (getStringIndexCount(text, "'")%2 == 1) {
+                            unUsed.append(text);
+                            unUsed.append("\n");
+                            inQuotation = true;
+                        } else {
+                            StrObj obj = new StrObj();
+                            encapuStrObj(obj, text, 1);
+                            tarStack.add(obj);
+                            seqList.add(new Sequence(1, false));
+                            inQuotation = false;
+                        }
                     }
-                    count++;
                 }
             }
             return true;
@@ -141,7 +134,13 @@ public class ReverseNewText {
         for (int i=0; i<arr.length; i++) {
             if (type == 1) {
                 if (i % 2 == 1) {
-                    stack.add("'" + arr[i] + "'");
+                    String temp = arr[i];
+                    if (temp.startsWith("\n") && !temp.endsWith("\n")) {
+                        temp = temp.substring(1, temp.length()) + "\n";
+                    } else if (!temp.startsWith("\n") && temp.endsWith("\n")) {
+                        temp = "\n" + temp.substring(0, temp.length() - 1);
+                    }
+                    stack.add("'" + temp + "'");
                 } else {
                     String content = reverseStr(arr[i]);
                     stack.add(content);
@@ -172,7 +171,7 @@ public class ReverseNewText {
         }
         StringBuilder strBuilder = new StringBuilder();
         while (!stack.isEmpty()) {
-            strBuilder.append(String.valueOf(stack.pop()));
+            strBuilder.append(stack.pop());
         }
         return strBuilder.toString();
     }
@@ -215,7 +214,7 @@ public class ReverseNewText {
                     }
                 }
                 write(newFilePath, content);
-                if (i != seqList.size() - 1) {
+                if (i != seqList.size()-1) {
                     write(newFilePath, "\n");
                 }
             }
@@ -268,26 +267,7 @@ public class ReverseNewText {
 
     }
 
-    private static class Detail {
-        /**
-         * 1 - stack
-         * 2 - list
-         */
-        int type;
-
-        /**
-         * 栈中元素个数
-         */
-        int length;
-    }
-
     private static class Sequence {
-        /**
-         * 顺序，
-         * 1，2，3
-         */
-        public int sequence;
-
         /**
          * 类型
          * 1-stack
@@ -296,21 +276,14 @@ public class ReverseNewText {
         public int type;
 
         /**
-         * 是栈 或 队列中的 第几个元素
-         */
-        public int num;
-
-        /**
          * 是否在引号内
          */
         public boolean inQuotation;
 
         public Sequence() {}
 
-        public Sequence(int sequence, int type, int num, boolean inQuotation) {
-            this.sequence = sequence;
+        public Sequence(int type, boolean inQuotation) {
             this.type = type;
-            this.num = num;
             this.inQuotation = inQuotation;
         }
     }
